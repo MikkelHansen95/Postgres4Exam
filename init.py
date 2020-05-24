@@ -107,19 +107,43 @@ def createDBStructure():
         END;
 	    $$;
         '''
+        storedprod_get_single_course='''
+            CREATE OR REPLACE PROCEDURE coursesschema.get_single_client(int)
+            LANGUAGE plpgsql
+            AS $$
+            BEGIN
+	            SELECT courses.*, level.title FROM coursesschema.courses 
+	            INNER JOIN 
+	            coursesschema.level on coursesschema.level.id = courses.level
+	            where courses.id = $1;
+            END;
+            $$;
+        '''
         connection = connect2DB()
         cursor = connection.cursor()
         cursor.execute(create_schema)
+        connection.commit()
         cursor.execute(create_table_courses_level_query)
+        connection.commit()
         cursor.execute(create_table_courses_subject_query)
+        connection.commit()
         cursor.execute(create_table_courses_query)
+        connection.commit()
         cursor.execute(create_table_coursesAndsubject_query)
+        connection.commit()
         cursor.execute(create_table_log_query)
+        connection.commit()
         cursor.execute(storedprod_insert_level)
+        connection.commit()
         cursor.execute(storedprod_insert_subject)
+        connection.commit()
         cursor.execute(storedprod_insert_course)
+        connection.commit()
         cursor.execute(storedprod_insert_courseWithSubject)
+        connection.commit()
         cursor.execute(storedprod_insert_log)
+        connection.commit()
+        cursor.execute(storedprod_get_single_course)
         connection.commit()
     except (psycopg2.Error) as error:
         connection.rollback()

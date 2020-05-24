@@ -1,50 +1,50 @@
-from flask import Flask, request
-from flask_restful import Resource, Api
+from flask import Flask, json
+from flask_restful import reqparse, abort, Api, Resource
 from . import myfunctions
 from . import init
 import sys
 
 app = Flask(__name__)
 api = Api(app) 
+
 init.populateDB()
+
+parser = reqparse.RequestParser()
+parser.add_argument('task')
+
 
 class Course(Resource):
 
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('id', type = int, required = True,
+            help = 'No id provided', location = 'json')
+        super(Course, self).__init__()
+
+    def get(self, id):
+        return myfunctions.getSingleCourse(id)
+
+    def post(self,todo_id):
+        #args = parser.parse_args()
+        #return myfunctions.postSingleCourse(args)
+        return "ses"
+
+    def put(self,todo_id):
+        #args = parser.parse_args()
+        #return myfunctions.putSingleCourse(args)
+        return ""
+    def delete(self,todo_id):
+        #args = parser.parse_args()
+        #return myfunctions.deleteSingleCourse(args)
+        return ""
+
+class Welcome(Resource):
     def get(self):
-        return myfunctions.getSingleCourse()
-
-    def post(self):
-        return myfunctions.postSingleCourse()
-
-    def put(self):
-        return myfunctions.putSingleCourse()
-    
-    def delete(self):
-        return myfunctions.deleteSingleCourse()
+        return myfunctions.simpleHello()
 
 
-@app.route("/", methods=['GET'])
-def defaultRoute():
-    return myfunctions.simpleHello()
-
-@app.route("/courses", methods=['GET'])
-def getCoursesApi():
-    return myfunctions.getCourses()
-
-@app.route("/courses/<int:key>/", methods=['GET','POST','PUT','POST'])
-def singleCourse():
-    if (request.method == 'GET'):
-        return myfunctions.getSingleCourse(key)
-    elif (request.method == 'PUT'):
-        return myfunctions.putCourse(key)
-    elif (request.method == 'POST'):
-        return myfunctions.postCourse(key)
-    elif (request.method == 'DELETE'):
-        return myfunctions.deleteCourse(key)
-    else:
-        abort(409)
-
-api.add_resource(Course, '/course/<int:id>') 
+api.add_resource(Welcome, '/') 
+api.add_resource(Course, '/course/<int:id>', endpoint = 'course') 
 
 if __name__ == '__main__':
     app.run(debug=True)

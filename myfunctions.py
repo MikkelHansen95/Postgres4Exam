@@ -1,6 +1,9 @@
 import psycopg2
 import csv
 import sys
+from flask import Flask
+import simplejson as json
+from . import connector
 
 def simpleHello():
     return "Hello and welcome to the PostgreSQL API!"
@@ -34,14 +37,30 @@ def getCourses():
         else:
             return "virker ikke"
 
-def getSingleCourse():
+def getSingleCourse(id):
+    conn = connector.connect2DB()
+    cursor = conn.cursor()
+    cursor.execute('CALL coursesschema.get_single_client(%s);',[id])
+    result = cursor.fetchone()
+    print(result)
+    return json.dumps({
+        'id': result[0],
+        'title': result[1],
+        'url': result[2],
+        'paid': result[3],
+        'price': result[4],
+        'number_subscribers': result[5],
+        'number_reviews': result[6],
+        'number_of_lectures': result[7],
+        'duration': result[8],
+        'level': result[10]        
+    })
+
+def postSingleCourse(args):
+    return "ses"
+
+def putSingleCourse(args):
     return ""
 
-def postSingleCourse():
-    return ""
-
-def putSingleCourse():
-    return ""
-
-def deleteSingleCourse():
+def deleteSingleCourse(args):
     return ""
