@@ -108,17 +108,53 @@ def createDBStructure():
 	    $$;
         '''
         storedprod_get_single_course='''
-            CREATE OR REPLACE PROCEDURE coursesschema.get_single_client(int)
-            LANGUAGE plpgsql
-            AS $$
-            BEGIN
-	            SELECT courses.*, level.title FROM coursesschema.courses 
-	            INNER JOIN 
-	            coursesschema.level on coursesschema.level.id = courses.level
-	            where courses.id = $1;
-            END;
-            $$;
+        CREATE OR REPLACE FUNCTION show_single_courses(cid int) 
+        RETURNS TABLE (course_id INT,title TEXT,url TEXT,paid BOOLEAN,price INT,number_subscribers INT,number_reviews INT,number_of_lectures INT,	duration NUMERIC, level TEXT) 
+        AS $func$       
+        BEGIN
+	        RETURN QUERY SELECT courses.id, courses.title, courses.url, courses.paid, courses.price, courses.number_subscribers,
+						        courses.number_reviews, courses.number_of_lectures, courses.duration, level.title 
+				FROM coursesschema.courses 
+				INNER JOIN 
+				coursesschema.level on coursesschema.level.id = courses.level
+				where courses.id = cid LIMIT 1;  
+				RETURN;
+        END;
+        $func$ LANGUAGE plpgsql;
         '''
+        storedprod_put_single_course = '''
+        CREATE OR REPLACE PROCEDURE coursesschema.update_course(int, text, text, boolean, int, int, int, int, numeric, int)
+        LANGUAGE plpgsql
+	    AS $$
+        BEGIN
+            UPDATE coursesschema.courses
+            SET title = $2,  url = $3, paid = $4, price = $5, number_subscribers = $6, number_reviews = $7, number_of_lectures = $8, duration = $9, level = $10
+            WHERE id = $1;
+        END;
+	    $$;
+        '''
+        storedprod_put_single_course = '''
+        CREATE OR REPLACE PROCEDURE coursesschema.update_course(int, text, text, boolean, int, int, int, int, numeric, int)
+        LANGUAGE plpgsql
+	    AS $$
+        BEGIN
+            UPDATE coursesschema.courses
+            SET title = $2,  url = $3, paid = $4, price = $5, number_subscribers = $6, number_reviews = $7, number_of_lectures = $8, duration = $9, level = $10
+            WHERE id = $1;
+        END;
+	    $$;
+        '''
+
+        storedprod_delete_single_course = '''
+        CREATE OR REPLACE PROCEDURE coursesschema.delete_course(int)
+        LANGUAGE plpgsql
+	    AS $$
+        BEGIN
+            DELETE coursesschema.courses WHERE id = $1;
+        END;
+	    $$;
+        '''
+
         connection = connect2DB()
         cursor = connection.cursor()
         cursor.execute(create_schema)
@@ -145,6 +181,10 @@ def createDBStructure():
         connection.commit()
         cursor.execute(storedprod_get_single_course)
         connection.commit()
+        cursor.execute(storedprod_put_single_course)
+        connection.commit()
+        cursor.execute(storedprod_delete_single_course)
+        connection.commit() 
     except (psycopg2.Error) as error:
         connection.rollback()
         print (f"Couldn't open and populate db from file", error, file=sys.stdout)
