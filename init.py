@@ -41,8 +41,8 @@ def createDBStructure():
         create_table_coursesAndsubject_query = '''
 		CREATE TABLE IF NOT EXISTS coursesschema.coursesandsubject (
             id serial PRIMARY KEY NOT NULL,
-            course_id int REFERENCES coursesschema.courses(id) NOT NULL,
-            subject_id int REFERENCES coursesschema.subject(id) NOT NULL
+            course_id int REFERENCES coursesschema.courses(id) ON DELETE CASCADE,
+            subject_id int REFERENCES coursesschema.subject(id) ON DELETE CASCADE
         )
         '''
 
@@ -72,7 +72,7 @@ def createDBStructure():
 	    $$;
         '''
         storedprod_insert_course = '''
-        CREATE OR REPLACE PROCEDURE coursesschema.insert_course(text, text, boolean, int, int, int, int, int, numeric)
+        CREATE OR REPLACE PROCEDURE coursesschema.insert_course(text, text, boolean, int, int, int, int, int, numeric) 
         LANGUAGE plpgsql
 	    AS $$
         BEGIN
@@ -150,7 +150,7 @@ def createDBStructure():
         LANGUAGE plpgsql
 	    AS $$
         BEGIN
-            DELETE coursesschema.courses WHERE id = $1;
+            DELETE FROM coursesschema.courses WHERE id = $1;
         END;
 	    $$;
         '''

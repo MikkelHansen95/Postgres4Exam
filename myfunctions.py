@@ -55,7 +55,7 @@ def getCourses(args):
                             JOIN coursesschema.coursesandsubject on coursesschema.coursesandsubject.subject_id = coursesschema.subject.id
                             JOIN coursesschema.courses on coursesschema.courses.id = coursesschema.coursesandsubject.course_id
                             JOIN coursesschema.level on coursesschema.level.id = courses.level
-                            WHERE coursesschema.level.title = %s''', [args.price]
+                            WHERE coursesschema.level.title = %s''', [args.level]
                            )
         
         #GET TAG
@@ -119,7 +119,7 @@ def getSingleCourse(id):
                 'tags': [ result[11] ]    
         }
         else:
-            return ""
+            return {} ,404
     except (psycopg2.Error) as error:
         return {'status': 400, 'error': error.pgerror } ,400
   
@@ -133,7 +133,7 @@ def postSingleCourse(args):
         [ str(args.title), str(args.url), args.paid, args.price, args.number_subscribers, args.number_reviews, args.number_of_lectures, args.level , args.duration ] )
         conn.commit()
         #print(result, flush=True)
-        return {'status': 210}, 201
+        return {'status': 201}, 201
     except (psycopg2.Error) as error:
         #print(f"f.. " , error, flush=True)
         if("23505" in error.pgcode):
@@ -150,7 +150,7 @@ def putSingleCourse(args,id):
         [id, args.title, args.url, args.paid, args.price, args.number_subscribers, args.number_reviews, args.number_of_lectures, args.duration, args.level])
         conn.commit()
         #print(result, flush=True)
-        return {'status': 200}
+        return {'status': 204}, 204
     except (psycopg2.Error) as error:
         #print(f"f.. " , error, flush=True)
         if("23505" in error.pgcode):

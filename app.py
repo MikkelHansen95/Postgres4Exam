@@ -16,7 +16,7 @@ class Course(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         #self.reqparse.add_argument('id', type = int, required = True,
-        #    help = 'No id provided', location = 'args')
+        #help = 'No id provided', location = 'args')
         super(Course, self).__init__()
 
     def get(self, id):
@@ -102,7 +102,6 @@ class CourseGetAll(Resource):
 
 
 api.add_resource(Welcome, '/') 
-api.add_resource(CourseGetAll, '/courses')
 api.add_resource(CourseGetAll, '/courses')
 api.add_resource(Course, '/courses/<int:id>')
 api.add_resource(CoursePost, '/courses/') 
