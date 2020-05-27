@@ -3,7 +3,7 @@ import csv
 import sys
 from flask import Flask
 import simplejson as json
-from . import connector
+import connector
 
 def simpleHello():
     return "Hello and welcome to the PostgreSQL API!"

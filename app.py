@@ -1,8 +1,8 @@
 from flask import Flask
 import simplejson as json
 from flask_restful import reqparse, abort, Api, Resource
-from . import myfunctions
-from . import init
+import myfunctions
+import init
 import sys
 
 app = Flask(__name__)
